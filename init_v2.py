@@ -46,10 +46,7 @@ feature = []
 
 ## Load the Keras-Tensorflow models into a dictionary
 
-pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5'),
-                'word2vec_cnn' : load_model('./Models/word2vec_cnn.hdf5'),
-                'word2seq_cnn_birnn_bilstm' : load_model('./Models/word2seq_cnn_birnn_bilstm.hdf5'),
-                'word2vec_cnn_birnn_bilstm' : load_model('./Models/word2vec_cnn_birnn_bilstm.hdf5')}
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -100,6 +97,14 @@ def predict(text):
          'Ari_tweet':str(ari),
          'Char_tweet':str(char)}
     )
+
+    pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5'),
+                'word2vec_cnn' : load_model('./Models/word2vec_cnn.hdf5'),
+                'word2seq_cnn_birnn_bilstm' : load_model('./Models/word2seq_cnn_birnn_bilstm.hdf5'),
+                'word2vec_cnn_birnn_bilstm' : load_model('./Models/word2vec_cnn_birnn_bilstm.hdf5')}
+
+    for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
+        pred_models[model]._make_predict_function()
     
     for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
         x_test = keras_seq.pad_sequences(list_tokenized_test, 
