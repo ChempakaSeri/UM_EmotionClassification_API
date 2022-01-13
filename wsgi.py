@@ -9,9 +9,9 @@ def main():
     #              'word2seq_cnn_birnn_bilstm' : load_model('./Models/word2seq_cnn_birnn_bilstm.hdf5'),
     #              'word2vec_cnn_birnn_bilstm' : load_model('./Models/word2vec_cnn_birnn_bilstm.hdf5')}
     
-    # ## Make prediction function
-    # for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
-    #     pred_models[model]._make_predict_function()
+    ## Make prediction function
+    for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
+        pred_models[model]._make_predict_function()
     
     # ## Loading the Keras Tokenizer sequence file
     # global tokenizer
