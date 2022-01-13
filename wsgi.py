@@ -1,8 +1,7 @@
-from init_v2 import app,load_model,os,pickle,keras_seq,request,jsonify,pickle,np,textstat,flask,warnings
+from init_v2 import app,load_model,os,pickle,keras_seq,request,jsonify,pickle,np,textstat,flask,warnings,pred_models
 
 if __name__ == '__main__':
     ## Load the Keras-Tensorflow models into a dictionary
-    global pred_models 
     
     # pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5'),
     #              'word2vec_cnn' : load_model('./Models/word2vec_cnn.hdf5'),
@@ -10,8 +9,8 @@ if __name__ == '__main__':
     #              'word2vec_cnn_birnn_bilstm' : load_model('./Models/word2vec_cnn_birnn_bilstm.hdf5')}
     
     # ## Make prediction function
-    # for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
-    #     pred_models[model]._make_predict_function()
+    for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
+        pred_models[model]._make_predict_function()
     
     ## Loading the Keras Tokenizer sequence file
     global tokenizer
