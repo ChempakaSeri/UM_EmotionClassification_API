@@ -49,9 +49,6 @@ pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5'),
                  'word2seq_cnn_birnn_bilstm' : load_model('./Models/word2seq_cnn_birnn_bilstm.hdf5'),
                  'word2vec_cnn_birnn_bilstm' : load_model('./Models/word2vec_cnn_birnn_bilstm.hdf5')}
 
-with open('./pickle/tokenizer.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
-
 @app.route('/', methods=['GET'])
 def index():
     return "<h1>Hello</h1>"
@@ -76,6 +73,10 @@ def predict(text):
     global pred_models
     return_dict={}
     return_list={}
+
+    with open('./pickle/tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+
     
     ## Tokkenizing test data and create matrix
     list_tokenized_test = tokenizer.texts_to_sequences([text])
