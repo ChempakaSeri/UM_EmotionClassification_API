@@ -223,29 +223,3 @@ def analyse(data):
 
     print (return_dict,flush=True)
     return (return_dict)
-
-
-# def main():
-#     ## Load the Keras-Tensorflow models into a dictionary
-#     global pred_models 
-    
-#     pred_models={'word2seq_cnn' : load_model('C:/Users/Ameer/Documents/UM_EmotionClassification_API/Models/word2seq_cnn.hdf5'),
-#                  'word2vec_cnn' : load_model('C:/Users/Ameer/Documents/UM_EmotionClassification_API/Models/word2vec_cnn.hdf5'),
-#                  'word2seq_cnn_birnn_bilstm' : load_model('C:/Users/Ameer/Documents/UM_EmotionClassification_API/Models/word2seq_cnn_birnn_bilstm.hdf5'),
-#                  'word2vec_cnn_birnn_bilstm' : load_model('C:/Users/Ameer/Documents/UM_EmotionClassification_API/Models/word2vec_cnn_birnn_bilstm.hdf5')}
-    
-#     ## Make prediction function
-#     for model in [model[:-5]for model in os.listdir('C:/Users/Ameer/Documents/UM_EmotionClassification_API/Models')]:
-#         pred_models[model]._make_predict_function()
-    
-#     ## Loading the Keras Tokenizer sequence file
-#     global tokenizer
-#     with open('C:/Users/Ameer/Documents/UM_EmotionClassification_API/tokenizer.pickle', 'rb') as handle:
-#         tokenizer = pickle.load(handle)
-        
-#     app.run(host='localhost', port=5060)
-
-# if __name__ == '__main__':
-#     app.run(host='localhost', port=5000)
-
-
