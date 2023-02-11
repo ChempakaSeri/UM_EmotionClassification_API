@@ -33,30 +33,43 @@ pred_models = {}
 INPUT_SIZE = {'word2seq_cnn':300,
               'word2vec_cnn':300,
               'word2seq_cnn_birnn_bilstm':300,
-              'word2vec_cnn_birnn_bilstm':300}
+              'word2vec_cnn_birnn_bilstm':300,
+              'word2seq_cnn_lstm':300,
+              'word2vec_cnn_lstm':300,
+              'word2seq_lstm':300,
+              'word2vec_lstm':300}
 
 table_name = {'word2seq_cnn':'Word2Seq_CNN',
               'word2vec_cnn':'Word2Vec_CNN',
               'word2seq_cnn_birnn_bilstm':'Word2Seq_CNN_BiRNN_BiLSTM',
-              'word2vec_cnn_birnn_bilstm':'Word2Vec_CNN_BiRNN_BiLSTM'}
+              'word2vec_cnn_birnn_bilstm':'Word2Vec_CNN_BiRNN_BiLSTM',
+              'word2seq_cnn_lstm':'Word2Seq_CNN_LSTM',
+              'word2vec_cnn_lstm':'Word2Vec_CNN_LSTM',
+              'word2seq_lstm':'Word2Seq_LSTM',
+              'word2vec_lstm':'Word2Vec_LSTM',}
 
 WORDS_SIZE = 10001
 db_host = 'localhost'
 db_username = 'root'
 db_pass = '1234'
 db_name = 'tweep'
-retName = ['Predicted_emotion','Predicted_emotion_value', 'Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad']
+retName = ['Predicted_emotion','Predicted_emotion_value', 'Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad','Probability_worry']
 
 feature = []
 
+#   Cannot add worry as there is no user with worry data label yet
 header = ['total_tweet','afraid_percent','anger_percent','bored_percent','excited_percent','happy_percent','relax_percent','sad_percent','avg_length','avg_ari','avg_char','std_dev','afraid_prob','anger_prob','bored_prob','excited_prob','happy_prob','relax_prob','sad_prob']
 
-retName_v2 = ['Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad']
+retName_v2 = ['Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad','Probabiliity_worry']
     
 pred_models={'word2seq_cnn' : load_model('./Models//word2seq_cnn.hdf5'),
                 'word2vec_cnn' : load_model('./Models//word2vec_cnn.hdf5'),
                 'word2seq_cnn_birnn_bilstm' : load_model('./Models//word2seq_cnn_birnn_bilstm.hdf5'),
-                'word2vec_cnn_birnn_bilstm' : load_model('./Models//word2vec_cnn_birnn_bilstm.hdf5')}
+                'word2vec_cnn_birnn_bilstm' : load_model('./Models//word2vec_cnn_birnn_bilstm.hdf5'),
+                'word2seq_cnn_lstm' : load_model('./Models//word2seq_cnn_lstm.hdf5'),
+                'word2vec_cnn_lstm' : load_model('./Models//word2vec_cnn_lstm.hdf5'),
+                'word2seq_lstm' : load_model('./Models//word2seq_lstm.hdf5'),
+                'word2vec_lstm' : load_model('./Models//word2vec_lstm.hdf5')}
 
 ## Make prediction function
 for model in [model[:-5]for model in os.listdir('./Models')]:
@@ -133,9 +146,10 @@ def predict(text):
         happy_probability = pred_models[model].predict_proba(x_test)[0][4]
         relax_probability = pred_models[model].predict_proba(x_test)[0][5]
         sad_probability = pred_models[model].predict_proba(x_test)[0][6]
+        worry_probability = pred_models[model].predict_proba(x_test)[0][7]
 
 
-        arr = [afraid_probability, anger_probability, bored_probability, excited_probability, happy_probability, relax_probability, sad_probability]
+        arr = [afraid_probability, anger_probability, bored_probability, excited_probability, happy_probability, relax_probability, sad_probability, worry_probability]
         max = arr[0]
         
 
@@ -164,6 +178,8 @@ def predict(text):
         if max == sad_probability:
             emotion = 6
         
+        if max == worry_probability:
+            emotion = 6
 
         # save_to_db(model, text, emotion, anger_probability, fear_probability, joy_probability, love_probability, sadness_probability, surprise_probability)
         
@@ -176,7 +192,8 @@ def predict(text):
              retName[5]:str(excited_probability),
              retName[6]:str(happy_probability),
              retName[7]:str(relax_probability),
-             retName[8]:str(sad_probability)
+             retName[8]:str(sad_probability),
+             retName[9]:str(worry_probability)
              }})
     
     return(return_dict)
