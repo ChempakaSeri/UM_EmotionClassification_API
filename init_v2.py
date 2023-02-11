@@ -32,8 +32,6 @@ error = None
 pred_models = {}
 INPUT_SIZE = {'word2seq_cnn':300,
               'word2vec_cnn':300,
-              'word2seq_cnn_birnn_bilstm':300,
-              'word2vec_cnn_birnn_bilstm':300,
               'word2seq_cnn_lstm':300,
               'word2vec_cnn_lstm':300,
               'word2seq_lstm':300,
@@ -41,8 +39,6 @@ INPUT_SIZE = {'word2seq_cnn':300,
 
 table_name = {'word2seq_cnn':'Word2Seq_CNN',
               'word2vec_cnn':'Word2Vec_CNN',
-              'word2seq_cnn_birnn_bilstm':'Word2Seq_CNN_BiRNN_BiLSTM',
-              'word2vec_cnn_birnn_bilstm':'Word2Vec_CNN_BiRNN_BiLSTM',
               'word2seq_cnn_lstm':'Word2Seq_CNN_LSTM',
               'word2vec_cnn_lstm':'Word2Vec_CNN_LSTM',
               'word2seq_lstm':'Word2Seq_LSTM',
@@ -64,8 +60,6 @@ retName_v2 = ['Probability_afraid','Probability_anger','Probability_bored','Prob
     
 pred_models={'word2seq_cnn' : load_model('./Models//word2seq_cnn.hdf5'),
                 'word2vec_cnn' : load_model('./Models//word2vec_cnn.hdf5'),
-                'word2seq_cnn_birnn_bilstm' : load_model('./Models//word2seq_cnn_birnn_bilstm.hdf5'),
-                'word2vec_cnn_birnn_bilstm' : load_model('./Models//word2vec_cnn_birnn_bilstm.hdf5'),
                 'word2seq_cnn_lstm' : load_model('./Models//word2seq_cnn_lstm.hdf5'),
                 'word2vec_cnn_lstm' : load_model('./Models//word2vec_cnn_lstm.hdf5'),
                 'word2seq_lstm' : load_model('./Models//word2seq_lstm.hdf5'),
