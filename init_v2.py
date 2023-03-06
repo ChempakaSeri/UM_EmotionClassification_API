@@ -48,14 +48,14 @@ header = ['total_tweet','afraid_percent','anger_percent','bored_percent','excite
 
 retName_v2 = ['Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad','Probabiliity_worry']
     
-pred_models={'word2seq_cnn' : load_model('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/Models/word2seq_cnn.hdf5')}
+pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5')}
 
 ## Make prediction function
 for model in [model[:-5]for model in os.listdir('./Models')]:
     pred_models[model]._make_predict_function()
 
 ## Loading the Keras Tokenizer sequence file
-with open('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/pickle/tokenizer.pickle', 'rb') as handle:
+with open('./pickle/tokenizer.pickle', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
 @app.route('/', methods=['GET'])
@@ -109,7 +109,7 @@ def predict(text):
          'Char_tweet':str(char)}
     ) 
     
-    for model in [model[:-5]for model in os.listdir('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/Models')]:
+    for model in [model[:-5]for model in os.listdir('./Models')]:
         x_test = keras_seq.pad_sequences(list_tokenized_test, 
                                          maxlen=INPUT_SIZE[model],
                                          padding='post')
@@ -180,7 +180,7 @@ def predict(text):
 def analyse(data):
     joblib_model = xgb.Booster({'nthread':4})
     
-    joblib_model.load_model('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/EIM_Model/xgboost_19.pkl')
+    joblib_model.load_model('./EIM_Model/xgboost_19.pkl')
     
     return_dict = {}
     
