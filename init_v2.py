@@ -30,15 +30,11 @@ tokenizer = None
 error = None
 
 pred_models = {}
-INPUT_SIZE = {'word2seq_cnn':300}
+INPUT_SIZE = {'word2seq_cnn':700}
 
 table_name = {'word2seq_cnn':'Word2Seq_CNN'}
 
 WORDS_SIZE = 10001
-db_host = 'localhost'
-db_username = 'root'
-db_pass = '1234'
-db_name = 'tweep'
 retName = ['Predicted_emotion','Predicted_emotion_value', 'Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad','Probability_worry']
 
 feature = []
@@ -47,15 +43,13 @@ feature = []
 header = ['total_tweet','afraid_percent','anger_percent','bored_percent','excited_percent','happy_percent','relax_percent','sad_percent','avg_length','avg_ari','avg_char','std_dev','afraid_prob','anger_prob','bored_prob','excited_prob','happy_prob','relax_prob','sad_prob']
 
 retName_v2 = ['Probability_afraid','Probability_anger','Probability_bored','Probability_excited','Probability_happy', 'Probability_relax', 'Probability_sad','Probabiliity_worry']
-    
-pred_models={'word2seq_cnn' : load_model('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/Models/word2seq_cnn.hdf5')}
 
-## Make prediction function
-for model in [model[:-5]for model in os.listdir('./Models')]:
-    pred_models[model]._make_predict_function()
 
+model = 'word2seq_cnn'
+pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5')}
+pred_models[model]._make_predict_function()
 ## Loading the Keras Tokenizer sequence file
-with open('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/pickle/tokenizer.pickle', 'rb') as handle:
+with open('./pickle/tokenizer.pickle', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
 @app.route('/', methods=['GET'])
@@ -88,7 +82,8 @@ def api_sentiment():
         return "Error: No text field provided. Please specify a text."
 
 def predict(text):
-    global pred_models
+    # global pred_models
+
     return_dict={}
     
     ## Tokkenizing test data and create matrix
@@ -109,78 +104,80 @@ def predict(text):
          'Char_tweet':str(char)}
     ) 
     
-    for model in [model[:-5]for model in os.listdir('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/Models')]:
-        x_test = keras_seq.pad_sequences(list_tokenized_test, 
-                                         maxlen=INPUT_SIZE[model],
-                                         padding='post')
-        x_test = x_test.astype(np.int64)
+    model = 'word2seq_cnn'
+    x_test = keras_seq.pad_sequences(list_tokenized_test, 
+                                        maxlen=INPUT_SIZE[model],
+                                        padding='post')
+    x_test = x_test.astype(np.int64)
 
-        ## Predict using the loaded model
+    ## Predict using the loaded model
+    emotion = 0
+    
+    afraid_probability = pred_models[model].predict_proba(x_test)[0][0]
+    anger_probability = pred_models[model].predict_proba(x_test)[0][1]
+    bored_probability = pred_models[model].predict_proba(x_test)[0][2]
+    excited_probability = pred_models[model].predict_proba(x_test)[0][3]
+    happy_probability = pred_models[model].predict_proba(x_test)[0][4]
+    relax_probability = pred_models[model].predict_proba(x_test)[0][5]
+    sad_probability = pred_models[model].predict_proba(x_test)[0][6]
+    worry_probability = pred_models[model].predict_proba(x_test)[0][7]
+
+
+    arr = [afraid_probability, anger_probability, bored_probability, excited_probability, happy_probability, relax_probability, sad_probability, worry_probability]
+    max = arr[0]
+    
+
+    for i in range(0, len(arr)):
+        if arr[i] > max:
+            max = arr[i]
+    
+    if max == afraid_probability:
         emotion = 0
-        
-        afraid_probability = pred_models[model].predict_proba(x_test)[0][0]
-        anger_probability = pred_models[model].predict_proba(x_test)[0][1]
-        bored_probability = pred_models[model].predict_proba(x_test)[0][2]
-        excited_probability = pred_models[model].predict_proba(x_test)[0][3]
-        happy_probability = pred_models[model].predict_proba(x_test)[0][4]
-        relax_probability = pred_models[model].predict_proba(x_test)[0][5]
-        sad_probability = pred_models[model].predict_proba(x_test)[0][6]
-        worry_probability = pred_models[model].predict_proba(x_test)[0][7]
 
+    if max == anger_probability:
+        emotion = 1
+    
+    if max == bored_probability:
+        emotion = 2
+    
+    if max == excited_probability:
+        emotion = 3
+    
+    if max == happy_probability:
+        emotion = 4
+    
+    if max == relax_probability:
+        emotion = 5
+    
+    if max == sad_probability:
+        emotion = 6
+    
+    if max == worry_probability:
+        emotion = 7
 
-        arr = [afraid_probability, anger_probability, bored_probability, excited_probability, happy_probability, relax_probability, sad_probability, worry_probability]
-        max = arr[0]
-        
-
-        for i in range(0, len(arr)):
-            if arr[i] > max:
-                max = arr[i]
-        
-        if max == afraid_probability:
-            emotion = 0
-
-        if max == anger_probability:
-            emotion = 1
-        
-        if max == bored_probability:
-            emotion = 2
-        
-        if max == excited_probability:
-            emotion = 3
-        
-        if max == happy_probability:
-            emotion = 4
-        
-        if max == relax_probability:
-            emotion = 5
-        
-        if max == sad_probability:
-            emotion = 6
-        
-        if max == worry_probability:
-            emotion = 7
-
-        # save_to_db(model, text, emotion, anger_probability, fear_probability, joy_probability, love_probability, sadness_probability, surprise_probability)
-        
-        return_dict.update({table_name[model]: #word2seq_cnn, word2vec_cnn, ...
-            {retName[0]:str(emotion),
-             retName[1]:str(max),
-             retName[2]:str(afraid_probability), 
-             retName[3]:str(anger_probability),
-             retName[4]:str(bored_probability),
-             retName[5]:str(excited_probability),
-             retName[6]:str(happy_probability),
-             retName[7]:str(relax_probability),
-             retName[8]:str(sad_probability),
-             retName[9]:str(worry_probability)
-             }})
+    # save_to_db(model, text, emotion, anger_probability, fear_probability, joy_probability, love_probability, sadness_probability, surprise_probability)
+    
+    return_dict.update({table_name[model]: #word2seq_cnn, word2vec_cnn, ...
+        {
+            retName[0]:str(emotion),
+            retName[1]:str(max),
+            retName[2]:str(afraid_probability), 
+            retName[3]:str(anger_probability),
+            retName[4]:str(bored_probability),
+            retName[5]:str(excited_probability),
+            retName[6]:str(happy_probability),
+            retName[7]:str(relax_probability),
+            retName[8]:str(sad_probability),
+            retName[9]:str(worry_probability)
+        }
+    })
     
     return(return_dict)
 
 def analyse(data):
     joblib_model = xgb.Booster({'nthread':4})
     
-    joblib_model.load_model('C:/Users/Chempaka Seri/Documents/UM_EmotionClassification_API/EIM_Model/xgboost_19.pkl')
+    joblib_model.load_model('./EIM_Model/xgboost_19.pkl')
     
     return_dict = {}
     
@@ -219,3 +216,6 @@ def analyse(data):
 
     print (return_dict,flush=True)
     return (return_dict)
+
+if __name__ == '__main__':
+    app.run(host='localhost', port=5000)

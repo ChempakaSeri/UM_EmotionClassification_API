@@ -75,6 +75,9 @@ def api_sentiment():
 
 def predict(text):
     global pred_models
+
+    pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5')}
+
     return_dict={}
     return_list={}
     
@@ -145,7 +148,7 @@ def predict(text):
         emotion = 6
     
     if max == worry_probability:
-        emotion = 6
+        emotion = 7
 
     # save_to_db(model, text, emotion, anger_probability, fear_probability, joy_probability, love_probability, sadness_probability, surprise_probability)
     
@@ -160,7 +163,7 @@ def predict(text):
             retName[6]:str(happy_probability),
             retName[7]:str(relax_probability),
             retName[8]:str(sad_probability),
-            retName[7]:str(worry_probability)
+            retName[9]:str(worry_probability)
         }
     })
     
@@ -212,14 +215,6 @@ def analyse(data):
 
 def main():
     ## Load the Keras-Tensorflow models into a dictionary
-    global pred_models 
-    
-    pred_models={'word2seq_cnn' : load_model('./Models/word2seq_cnn.hdf5')}
-    
-    ## Make prediction function
-    for model in [model[:-5]for model in os.listdir('./Models')[1:]]:
-        pred_models[model]._make_predict_function()
-    
     ## Loading the Keras Tokenizer sequence file
     global tokenizer
     with open('./pickle/tokenizer.pickle', 'rb') as handle:
